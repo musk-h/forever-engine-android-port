@@ -1,3 +1,8 @@
+# [forever engine v0.3.1 android port](https://github.com/musk-h/forever-engine-android-port) 🚬
+* para instalar las librerias de android, sigue los pasos del repositorio de luckydog https://github.com/luckydog7/Funkin-android
+* para compilar el source (con todo instalado) hay que actualizar un par de haxelibs, puedes usar el [bat](https://github.com/musk-h/forever-engine-android-port/blob/main/funkin_forever.bat) que dejé en la carpeta
+* todos los creditos al creador original del engine -[Yoshubs](https://github.com/Yoshubs)- (parece que desapareció de internet jasjasj)
+   
 # [Forever Engine](https://github.com/Yoshubs/FunkinForever)
 An open-source, quality of life and performance driven [Friday Night Funkin'](https://www.newgrounds.com/portal/view/770371) mod engine!
 ----------------------------------------------
