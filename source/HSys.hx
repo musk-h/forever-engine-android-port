@@ -7,6 +7,7 @@ import openfl.utils.Assets;
 import haxe.CallStack;
 import flixel.FlxG;
 import openfl.Lib;
+import haxe.io.Path;
 
 using StringTools;
 
@@ -16,6 +17,11 @@ using StringTools;
 */
 class HSys
 {
+	// tecnicamente esta lista siempre sera la misma
+	// asiq por temas de rendimiento mejor la guardamos enla ram 
+	// en vez de hacer el mismo metodo siempre
+	public static var assetList:Array<String> = Assets.list();
+	
 	public static function initCrashHandler()
 	{
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, function(e:UncaughtErrorEvent)
@@ -48,39 +54,23 @@ class HSys
 	// la cereza del pastel
 	public static function readDirectory(folder:String):Array<String>
 	{
-		var something:Array<String> = []; // algo algo, extraño a mi algo:( - musk
-		trace('hsys go to: ' + folder);
-
-		for (library in Assets.list().filter(archives -> archives.contains(folder)))
-		{
-			var splitFolder:Array<String> = [];
-			var stringFolder:String = library;
-
-			if (!library.startsWith('.') && !something.contains(folder)) {
-				stringFolder = stringFolder.replace(folder + '/', ''); // yea
-				splitFolder = stringFolder.split('/');
-			}
-			if (!something.contains(splitFolder[0])) // para que no se repitan
-				something.push(splitFolder[0]);
-		}
-
-		// ordenar por abecedario a-z
-		something.sort(function(a:String, b:String):Int
-		{
-			a = a.toUpperCase();
-			b = b.toUpperCase();
-
-			if (a < b)
-				return -1;
-			else if (a > b)
-				return 1;
-			else
-				return 0;
-		});
-
-		trace('hsys result is: ' + something);
-		return something;
-	}
+        var result = [];
+    
+        for (library in assetList.filter(archives -> archives.contains(folder))) {
+            if (!library.startsWith('.')) {
+                var name = library.replace(folder + '/', '').split('/')[0];
+                // contains pero un poooco mas rapido
+                if (result.indexOf(name) == -1)
+                    result.push(name);
+            }
+        }
+    
+        result.sort((a, b) -> {
+            return a.toUpperCase() < b.toUpperCase() ? -1 : (a.toUpperCase() > b.toUpperCase() ? 1 : 0);
+        });
+    
+        return result;
+    }
 
 	public static function exists(folder:String, ?type:AssetType = null):Bool
 	{
@@ -110,12 +100,12 @@ class HSys
 		return Assets.exists(folder + format);
 	}
 
-	public static function getContent(library:String):String {
+	public static function getContent(library:String):String
 		return Assets.getText(library);
-	}
 	
 	public static function androidTouched():Bool
 	{
+	    #if (flixel && android)
 		var justTouched:Bool = false;
 
 		for (touch in FlxG.touches.list)
@@ -123,8 +113,6 @@ class HSys
 			if (touch.justPressed)
 				justTouched = true;
 		}
-
-		#if (flixel && android)
  		return justTouched;
 		#else
  		return false;
